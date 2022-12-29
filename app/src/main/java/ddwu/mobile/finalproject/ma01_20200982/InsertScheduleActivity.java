@@ -1,0 +1,237 @@
+package ddwu.mobile.finalproject.ma01_20200982;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
+public class InsertScheduleActivity extends Activity {
+    private final String TAG = "InsertScheduleActivity";
+
+    EditText etName;
+    EditText etParty;
+    EditText etDate;
+    EditText etTime;
+    EditText etPlaceTitle;
+
+    ListView lvSearchResult;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> addrStringList;
+    String resultAddr = "";
+
+    Calendar calendar;
+    Time selectedTime;
+
+    ScheduleDB db;
+    ScheduleDao dao;
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_insert_schedule);
+
+        etName = (EditText)findViewById(R.id.etNameInsert);
+        etParty = (EditText)findViewById(R.id.etPartyInsert);
+        etDate = (EditText)findViewById(R.id.etDateInsert);
+        etTime = (EditText)findViewById(R.id.etTimeInsert);
+        etPlaceTitle = (EditText)findViewById(R.id.etPlaceTitleInsert);
+
+        lvSearchResult = findViewById(R.id.lv_searchResult_insert);
+        addrStringList = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, addrStringList);
+        lvSearchResult.setAdapter(adapter);
+
+        if (getIntent().hasExtra("name")) {
+            etPlaceTitle.setText(getIntent().getStringExtra("name"));
+        }
+
+        calendar = Calendar.getInstance();
+        selectedTime = new Time(0);
+
+        db = ScheduleDB.getDatabase(this);
+        dao = db.scheduleDao();
+
+        etDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(InsertScheduleActivity.this, datePicker,
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        etTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(InsertScheduleActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        etTime.setText(" " + selectedHour + " : " + selectedMinute);
+                        selectedTime.setHours(selectedHour);
+                        selectedTime.setMinutes(selectedMinute);
+                    }
+                }, hour, minute, true);
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+            }
+        });
+
+        lvSearchResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                String result = addrStringList.get(pos);
+                String placeTitle = result.split(" \\(")[0];
+                resultAddr = result.split("\\(")[1].split("\\)")[0];
+                etPlaceTitle.setText(placeTitle);
+            }
+        });
+    }
+
+    DatePickerDialog.OnDateSetListener datePicker = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            updateLabel();
+        }
+    };
+
+    private void updateLabel() {
+        String myFormat = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
+        etDate.setText(sdf.format(calendar.getTime()));
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_searchPlace_insert:
+                try {
+                    addrStringList = executeReverseGeocoding(etPlaceTitle.getText().toString());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (addrStringList.size() != 0) {
+                    adapter.clear();
+                    adapter.addAll(addrStringList);
+                }
+                break;
+            case R.id.btnInsertScheduleSave:
+                String name = etName.getText().toString();
+                String party = etParty.getText().toString();
+                String date = etDate.getText().toString();
+                String placeTitle = etPlaceTitle.getText().toString();
+                String address = "";
+                if (getIntent().hasExtra("address")) {
+                    address = getIntent().getStringExtra("address");
+                }
+                if (!resultAddr.equals("")) {
+                    address = resultAddr;
+                }
+
+                if (etName.length() == 0 || etParty.length() == 0 || etDate.length() == 0
+                    || etTime.length() == 0 || etPlaceTitle.length() == 0) {
+                    Toast.makeText(InsertScheduleActivity.this, "일정 정보를 모두 입력하세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Single<Long> insertResult = dao.insertSchedule(new ScheduleDto(name, Integer.parseInt(party), Date.valueOf(date), selectedTime.getHours(), selectedTime.getMinutes(), placeTitle, address));
+                    mDisposable.add(
+                            insertResult.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(result -> Log.d(TAG, "Insertion success: " + result),
+                                            throwable -> Log.d(TAG, "error"))
+                    );
+                    finish();
+                }
+                break;
+            case R.id.btnInsertScheduleClose:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDisposable.clear();
+    }
+
+    private ArrayList<String> executeReverseGeocoding(String string) throws ExecutionException, InterruptedException {
+        if (Geocoder.isPresent()) {
+            if (string != null) {
+                return new ReverseGeoTask().execute(string).get();
+            }
+        } else {
+            Toast.makeText(this, "No Geocoder", Toast.LENGTH_SHORT).show();
+        }
+        return null;
+    }
+
+    class ReverseGeoTask extends AsyncTask<String, Void, ArrayList<String>> {
+        Geocoder geocoder = new Geocoder(InsertScheduleActivity.this, Locale.getDefault());
+        @Override
+        protected ArrayList<String> doInBackground(String... strings) {
+            List<Address> addresses;
+            ArrayList<String> addrString = new ArrayList<String>();
+            try {
+                addresses = geocoder.getFromLocationName(strings[0], 5);
+                String[] splits = strings[0].split(" ");
+                if (splits.length > 1) {
+                    for (String split : splits) {
+                        addresses.add(geocoder.getFromLocationName(split, 1).get(0));
+                    }
+                }
+                for (Address address : addresses) {
+                    addrString.add(address.getFeatureName().toString() + " (" + address.getAddressLine(0).toString() + ")");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return addrString;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> arrayList) {
+            return;
+        }
+    }
+
+}

@@ -1,0 +1,212 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ddwu.mobile.finalproject.ma01_20200982.UpdateScheduleActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:gravity="center"
+        android:text="일정 수정"
+        android:fontFamily="@font/font_bold"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:gravity="bottom|center">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:text="일정"
+                android:fontFamily="@font/font_bold" />
+
+            <EditText
+                android:id="@+id/etNameUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:minHeight="48dp"
+                android:fontFamily="@font/font_bold"
+                tools:ignore="SpeakableTextPresentCheck">
+
+                <requestFocus />
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="인원"
+                android:fontFamily="@font/font_bold" />
+
+            <EditText
+                android:id="@+id/etPartyUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:inputType="number"
+                android:minHeight="48dp"
+                android:fontFamily="@font/font_bold"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="날짜"
+                android:fontFamily="@font/font_bold" />
+
+            <EditText
+                android:id="@+id/etDateUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:focusable="false"
+                android:inputType="date"
+                android:minHeight="48dp"
+                android:textSize="25sp"
+                android:fontFamily="@font/font_bold"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="시간"
+                android:fontFamily="@font/font_bold" />
+
+            <EditText
+                android:id="@+id/etTimeUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:focusable="false"
+                android:inputType="time"
+                android:minHeight="48dp"
+                android:textSize="25sp"
+                android:fontFamily="@font/font_bold"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="121dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_bold"
+                android:gravity="center"
+                android:text="          장소" />
+
+            <EditText
+                android:id="@+id/etPlaceTitleUpdate"
+                android:layout_width="207dp"
+                android:layout_height="48dp"
+                android:ems="7"
+                android:fontFamily="@font/font_bold"
+                android:inputType="textPersonName"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            <Button
+                android:id="@+id/btn_searchPlace_update"
+                android:layout_width="63dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:fontFamily="@font/font_bold"
+                android:text="검색"
+                android:onClick="onClick"
+                android:textColor="#FFFFFF"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </TableRow>
+    </TableLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ScrollView
+            android:id="@+id/scrollView4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/lv_searchResult_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btnUpdateScheduleClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="96dp"
+            android:fontFamily="@font/font_bold"
+            android:minHeight="48dp"
+            android:onClick="onClick"
+            android:text="닫기"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
+
+        <Button
+            android:id="@+id/btnUpdateScheduleSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
+            android:fontFamily="@font/font_bold"
+            android:onClick="onClick"
+            android:text="수정"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

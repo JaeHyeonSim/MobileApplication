@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tab_schedule"
+        android:enabled="true"
+        android:icon="@drawable/sommeet_logo"
+        android:title="일정"
+        android:fontFamily="@font/font_bold"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/tab_map"
+        android:enabled="true"
+        android:icon="@drawable/sommeet_logo"
+        android:title="지도"
+        android:fontFamily="@font/font_bold"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/tab_alarm"
+        android:enabled="true"
+        android:icon="@drawable/sommeet_logo"
+        android:title="알람"
+        android:fontFamily="@font/font_bold"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/tab_setting"
+        android:enabled="true"
+        android:icon="@drawable/sommeet_logo"
+        android:title="설정"
+        android:fontFamily="@font/font_bold"
+        app:showAsAction="always" />
+</menu>
