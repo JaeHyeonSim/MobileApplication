@@ -3,6 +3,7 @@
 
 시연 영상
 https://youtu.be/2nRDYpRuvIg
+
 추가 영상 - 알람 확인
 https://youtube.com/shorts/ysixrsVeoUA
 
