@@ -1,15 +1,13 @@
 # MobileApplication
 2022 동덕여대 모바일 응용
-
-
+<br/>
 시연 영상
 https://youtu.be/2nRDYpRuvIg
-
+<br/>
 추가 영상 - 알람 확인
 https://youtube.com/shorts/ysixrsVeoUA
-
-
-
+<br/>
+<br/>
 <img src="https://user-images.githubusercontent.com/112995965/209912275-f781be0e-5da1-41bb-9fb1-cae3b1435338.png" width="800"/>
 <img src="https://user-images.githubusercontent.com/112995965/209912346-fe0390e7-a900-471f-ad10-1d6244ea78dd.png" width="800"/>
 <img src="https://user-images.githubusercontent.com/112995965/209912359-09222e23-59d5-4726-a689-20793ec1674c.png" width="800"/>
